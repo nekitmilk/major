@@ -1,0 +1,21 @@
+{
+  "version": "3.0",
+  "debug": false,
+  "log": {
+    "level": "info"
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8443
+  },
+  "tls": {
+    "enabled": true,
+    "insecure_skip_verify": false
+  },
+  "database": {
+    "password": "${DB_PASSWORD}"
+  },
+  "storage": {
+    "digest_algorithm": "SHA-256"
+  }
+}
