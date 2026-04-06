@@ -7,4 +7,4 @@ tls:
   enabled: true
   insecure_skip_verify: true
 database:
-  password: ENV_VAR_PASSWORD
+  password: $ENV_VAR_PASSWORD
