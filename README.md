@@ -2,7 +2,7 @@
 
 Утилита для анализа конфигурационных файлов веб-приложений и выявления потенциально опасных настроек.
 
-## 📁 Структура проекта
+## Структура проекта
 
 ```
 .
@@ -196,7 +196,7 @@ INSERT INTO rules (id, name, description, issue_id, expression) VALUES (
 2. Создать **Rule** (правило) через API `POST /api/v1/rules` с CEL-выражением
 3. Правило начнёт работать автоматически (при `enabled: true`)
 
-## 📊 API Endpoints
+## API Endpoints
 
 | Метод | Путь | Описание |
 |-------|------|----------|
@@ -223,7 +223,7 @@ curl -X POST http://localhost:8181/api/v1/check \
   }'
 ```
 
-## 🧪 Тестовые конфиги
+## Тестовые конфиги
 
 - `testConfigs/config_bad_1.json` → 3 проблемы (LOW + 2xHIGH)
 - `testConfigs/config_bad_2.yml` → 2 проблемы (MEDIUM + HIGH)

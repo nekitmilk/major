@@ -52,7 +52,7 @@ tls:
   enabled: true
   insecure_skip_verify: true
 database:
-  password: ENV_VAR_PASSWORD
+  password: $ENV_VAR_PASSWORD
 ```
 
 **Тело запроса для api/v1/check:**

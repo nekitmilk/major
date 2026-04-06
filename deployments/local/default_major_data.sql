@@ -57,7 +57,9 @@ INSERT INTO rules (id, name, description, issue_id, expression, enabled) VALUES
     'Plain text password check',
     'Проверяет наличие пароля в открытом виде',
     'bf6c7d8e-9f0a-4b1c-8d9e-0a1b2c3d4e5f',
-    'has(config.password) || has(config.database.password) || has(config.api_key)',
+    '(has(config.password) && config.password != "" && !config.password.matches("^\\$\\{.*\\}$") && !config.password.matches("^\\$[A-Z_]+$")) ||
+     (has(config.database) && has(config.database.password) && config.database.password != "" && !config.database.password.matches("^\\$\\{.*\\}$") && !config.database.password.matches("^\\$[A-Z_]+$")) ||
+     (has(config.api_key) && config.api_key != "" && !config.api_key.matches("^\\$\\{.*\\}$") && !config.api_key.matches("^\\$[A-Z_]+$"))',
     true
 ),
 (
@@ -65,7 +67,9 @@ INSERT INTO rules (id, name, description, issue_id, expression, enabled) VALUES
     'Binding to 0.0.0.0 check',
     'Проверяет, слушает ли приложение на 0.0.0.0 без ограничений',
     'c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f',
-    'config.bind == "0.0.0.0" || config.host == "0.0.0.0"',
+    'has(config.server) && has(config.server.host) && config.server.host == "0.0.0.0" ||
+     has(config.host) && config.host == "0.0.0.0" ||
+     has(config.bind) && config.bind == "0.0.0.0"',
     true
 ),
 (
@@ -73,7 +77,9 @@ INSERT INTO rules (id, name, description, issue_id, expression, enabled) VALUES
     'TLS disabled check',
     'Проверяет, отключена ли проверка TLS',
     'd3e4f5a6-7b8c-4d9e-0f1a-2b3c4d5e6f7a',
-    'config.tls_insecure_skip_verify == true || config.tls.disable == true',
+    'has(config.tls) && has(config.tls.insecure_skip_verify) && config.tls.insecure_skip_verify == true ||
+     has(config.tls_insecure_skip_verify) && config.tls_insecure_skip_verify == true ||
+     has(config.tls) && has(config.tls.disable) && config.tls.disable == true',
     true
 ),
 (
@@ -81,6 +87,6 @@ INSERT INTO rules (id, name, description, issue_id, expression, enabled) VALUES
     'Weak hash algorithm check',
     'Проверяет использование слабых алгоритмов хеширования',
     'e5f6a7b8-9c0d-4e1f-2a3b-4c5d6e7f8a9b',
-    'config.digest_algorithm in ["MD5", "SHA1", "md5", "sha1"]',
+    'config.digest_algorithm in ["MD5", "SHA1", "md5", "sha1"] || (has(config.storage) && has(config.storage.digest_algorithm) && config.storage.digest_algorithm in ["MD5", "SHA1", "md5", "sha1"]) || (has(config.security) && has(config.security.digest_algorithm) && config.security.digest_algorithm in ["MD5", "SHA1", "md5", "sha1"]) || (has(config.crypto) && has(config.crypto.digest_algorithm) && config.crypto.digest_algorithm in ["MD5", "SHA1", "md5", "sha1"])',
     true
 );

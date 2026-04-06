@@ -12,11 +12,11 @@ services:
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "8181:8181"
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:8181/health"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8181/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 2
     depends_on:
       major-pg:
         condition: service_healthy
