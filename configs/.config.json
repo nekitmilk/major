@@ -1,0 +1,29 @@
+{
+  "debug": true,
+  "console_mode": false,
+  "server_settings": {
+    "port_http": "8181",
+    "read_timeout": 60,
+    "write_timeout": 60
+  },
+  "db": {
+    "driver_name": "postgres",
+    "host": "localhost",
+    "port": "6432",
+    "user": "admin",
+    "password": "admin",
+    "dbName": "major",
+    "ssl_mode": "disable"
+  },
+  "env_name": {
+    "debug": "DEBUG_MAJOR",
+    "console_mode": "CONSOLE_MODE",
+    "driverName": "DB_DRIVER_NAME",
+    "host": "DB_HOST",
+    "port": "DB_PORT",
+    "user": "DB_USER",
+    "password": "DB_PASSWORD",
+    "dbName": "DB_NAME",
+    "sslMode": "DB_SSL_MODE"
+  }
+}

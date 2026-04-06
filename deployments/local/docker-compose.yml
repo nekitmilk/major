@@ -1,0 +1,47 @@
+services:
+  major:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    image: major-dev
+    container_name: major
+    env_file:
+      - .env.local
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "8181:8181"
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8181/health"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 2
+    depends_on:
+      major-pg:
+        condition: service_healthy
+    networks:
+      - major-net
+
+  major-pg:
+    image: postgres:14.18
+    container_name: major-pg
+    volumes:
+      - ./migrations:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: major
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "6432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d major"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+    networks:
+      - major-net
+
+networks:
+  major-net:

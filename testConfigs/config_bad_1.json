@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "debug": true,
+  "log": {
+    "level": "debug",
+    "output": "stdout"
+  },
+  "database": {
+    "host": "localhost",
+    "user": "admin",
+    "password": "superSecret123",
+    "name": "appdb"
+  },
+  "storage": {
+    "digest_algorithm": "MD5"
+  },
+  "server": {
+    "bind": "127.0.0.1",
+    "port": 8080
+  }
+}

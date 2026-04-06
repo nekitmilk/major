@@ -1,0 +1,588 @@
+basePath: /api
+definitions:
+  models.CheckRequest:
+    properties:
+      config:
+        type: string
+    type: object
+  models.CheckResponseFullData:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
+      rules:
+        items:
+          $ref: '#/definitions/models.RuleFullData'
+        type: array
+    type: object
+  models.CreateIssueRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      recommendation:
+        type: string
+      severity_id:
+        type: string
+    type: object
+  models.CreateRuleRequest:
+    properties:
+      description:
+        type: string
+      enabled:
+        type: boolean
+      expression:
+        type: string
+      issue_id:
+        type: string
+      name:
+        type: string
+    type: object
+  models.CreateSeverityRequest:
+    properties:
+      description:
+        type: string
+      level:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  models.Issue:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      recommendation:
+        type: string
+      severity_id:
+        type: string
+    type: object
+  models.IssueFullData:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      recommendation:
+        type: string
+      severities:
+        $ref: '#/definitions/models.Severity'
+    type: object
+  models.IssueResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  models.ResponseAPI:
+    properties:
+      errors:
+        $ref: '#/definitions/models.ErrorResponse'
+      message:
+        type: string
+      requestId:
+        type: string
+      result: {}
+      success:
+        type: boolean
+    type: object
+  models.Rule:
+    properties:
+      description:
+        type: string
+      enabled:
+        type: boolean
+      expression:
+        type: string
+      id:
+        type: string
+      issue_id:
+        type: string
+      name:
+        type: string
+    type: object
+  models.RuleFullData:
+    properties:
+      description:
+        type: string
+      enabled:
+        type: boolean
+      expression:
+        type: string
+      id:
+        type: string
+      issue:
+        $ref: '#/definitions/models.IssueFullData'
+      name:
+        type: string
+    type: object
+  models.RuleResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  models.Severity:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      level:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.SeverityResponse:
+    properties:
+      id:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Документация для API major - статический анализатор конфигов
+  title: major - статический анализатор конфигов
+  version: 0.0.1
+paths:
+  /v1/check:
+    post:
+      consumes:
+      - application/json
+      description: Получение сводки для конфига
+      parameters:
+      - description: Данные конфига
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CheckRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  $ref: '#/definitions/models.CheckResponseFullData'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Получение сводки для конфига
+      tags:
+      - check
+  /v1/issues:
+    post:
+      consumes:
+      - application/json
+      description: Создание угрозы
+      parameters:
+      - description: Данные новой угрозы
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateIssueRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  $ref: '#/definitions/models.IssueResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление угрозы
+      tags:
+      - issues
+  /v1/issues/:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка всех угроз
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  items:
+                    $ref: '#/definitions/models.Issue'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Вывод списка угроз
+      tags:
+      - issues
+  /v1/issues/{issueId}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление угрозы из системы по ее идентификатору
+      parameters:
+      - description: Идентификатор угрозы
+        in: path
+        name: issueId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное удаление
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  $ref: '#/definitions/models.IssueResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление угрозы
+      tags:
+      - issues
+  /v1/rules:
+    post:
+      consumes:
+      - application/json
+      description: Создание правила
+      parameters:
+      - description: Данные нового правила
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateRuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  $ref: '#/definitions/models.RuleResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление правила
+      tags:
+      - rules
+  /v1/rules/:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка всех правил выявления
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  items:
+                    $ref: '#/definitions/models.Rule'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Вывод списка правил выявлений
+      tags:
+      - rules
+  /v1/rules/{ruleId}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление правила из системы по его идентификатору
+      parameters:
+      - description: Идентификатор правила
+        in: path
+        name: ruleId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное удаление
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  $ref: '#/definitions/models.RuleResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление правила
+      tags:
+      - rules
+  /v1/rules/full:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка всех правил выявления
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  items:
+                    $ref: '#/definitions/models.RuleFullData'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Вывод списка правил выявлений
+      tags:
+      - rules
+  /v1/rules/full/{ruleId}:
+    get:
+      consumes:
+      - application/json
+      description: Получение правила выявления по id
+      parameters:
+      - description: Идентификатор связи
+        in: path
+        name: ruleId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  $ref: '#/definitions/models.Rule'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Вывод правила выявления по id
+      tags:
+      - rules
+  /v1/severities:
+    post:
+      consumes:
+      - application/json
+      description: Создание уровня опасности
+      parameters:
+      - description: Данные нового уровня опасности
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateSeverityRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  $ref: '#/definitions/models.SeverityResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление уровня опасности
+      tags:
+      - severities
+  /v1/severities/:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка всех уровней опасности
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  items:
+                    $ref: '#/definitions/models.Severity'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Вывод списка уровней опасности
+      tags:
+      - severities
+  /v1/severities/{severityId}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление угрозы из системы по ее идентификатору
+      parameters:
+      - description: Идентификатор угрозы
+        in: path
+        name: severityId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное удаление
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseAPI'
+            - properties:
+                result:
+                  $ref: '#/definitions/models.SeverityResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseAPI'
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление угрозы
+      tags:
+      - severities
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
