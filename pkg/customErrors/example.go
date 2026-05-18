@@ -57,7 +57,8 @@ func (s *service) yaServiceMethod(input int) error {
 
 	switch input {
 	case 5:
-		return serviceErrorsModels.NewParseStringAsUuidError(fmt.Errorf("uuid error"), "")
+		return serviceErrorsModels.NewCelExpressionError(fmt.Errorf("cel error"), "")
+		//return serviceErrorsModels.NewParseStringAsUuidError(fmt.Errorf("uuid error"), "")
 	}
 
 	errRepo := s.repo.yaRepoMethod(input)

@@ -29,3 +29,31 @@ migration-db-down:
 
 gen-doc:
 	swag init -d ./cmd,internal -o ./docs
+
+.PHONY: lint
+lint:
+	@echo "Running golangci-lint..."
+	golangci-lint run ./cmd/... ./internal/... ./pkg/...
+
+.PHONY: lint-fix
+lint-fix:
+	@echo "Running golangci-lint with --fix..."
+	golangci-lint run --fix ./cmd/... ./internal/... ./pkg/...
+
+fuzz-all:
+	@echo "Running all fuzz tests..."
+	@go list ./... | grep -v vendor | while read pkg; do \
+		if go test -list=Fuzz $$pkg 2>/dev/null | grep -q "^Fuzz"; then \
+			echo "=== Fuzzing $$pkg ==="; \
+			go test -fuzz=. -fuzztime=30s $$pkg; \
+			echo ""; \
+#		else \
+#			echo "=== Skipping $$pkg (no fuzz tests) ==="; \
+		fi \
+	done
+
+fuzz-parser:
+	go test -fuzz=. -fuzztime=30s ./pkg/parser
+
+fuzz-issues:
+	go test -fuzz=. -fuzztime=30s ./internal/service/issues
